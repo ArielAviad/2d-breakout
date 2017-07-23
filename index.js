@@ -25,10 +25,10 @@ function drawBall() {
 
 function draw() {
     //if ball bounce to the top or bottom of the canvas
-    if (y+dy < 0 || y+dy > canvas.height)
+    if (y+dy-ballRadius < 0 || y+dy+ballRadius > canvas.height)
         dy = -dy;
     //if ball bounce to the left or right of the canvas
-    if (x+dx < 0 || x+dx > canvas.width)
+    if (x+dx-ballRadius < 0 || x+dx+ballRadius > canvas.width)
         dx = -dx;
 
     x+=dx;y+=dy;
