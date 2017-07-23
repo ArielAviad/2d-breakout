@@ -10,6 +10,8 @@
     <script src="index.js"></script>
     <script>
         init(document.getElementById("myCanvas"));
+        document.addEventListener("keydown",keyDownHandler,false);
+        document.addEventListener("keyup",keyUpHandler,false);
         //set the draw function.
         setInterval(draw,10);
     </script>
