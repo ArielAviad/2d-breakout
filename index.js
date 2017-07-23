@@ -15,12 +15,32 @@ var paddleX;
 var rightPressed = false;
 var leftPressed = false;
 
+var brickRowCount = 3;
+var brickColumnCount = 5;
+var brickWidth = 75;
+var brickHeight = 20;
+var brickPadding = 10;
+var brickOffsetTop = 30;
+var brickOffsetLeft = 30;
+
+var bricks = [];
+
 function init(_canvas) {
     canvas = _canvas;
     ctx = _canvas.getContext("2d");
     x = _canvas.width/2;
     y = _canvas.height-30;
     paddleX =(canvas.width-paddleWidth)/2;
+
+    document.addEventListener("keydown",keyDownHandler,false);
+    document.addEventListener("keyup",keyUpHandler,false);
+
+    for(c=0; c<brickColumnCount; c++) {
+        bricks[c] = [];
+        for(r=0; r<brickRowCount; r++) {
+            bricks[c][r] = { x: 0, y: 0 };
+        }
+    }
 
 }
 
@@ -52,16 +72,40 @@ function drawPaddle() {
     ctx.beginPath();
     ctx.rect(paddleX,canvas.height-paddleHeight,
         paddleWidth,paddleHeight);
-    ctx.fillStyle = "#0095DD";
+    ctx.fillStyle = ballColor;
     ctx.fill();
     ctx.closePath();
 }
 
+function drawBricks() {
+    for(var c=0;c<brickColumnCount;++c){
+        for(var r=0;r<brickRowCount;++r){
+            var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX,brickY,brickWidth,brickHeight);
+            ctx.fillStyle = ballColor;
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+}
+
 function draw() {
-    //if ball bounce to the top or bottom of the canvas
-    if (y+dy-ballRadius < 0 || y+dy+ballRadius > canvas.height) {
+    //if ball bounce to the top of the canvas
+    if (y+dy-ballRadius < 0) {
         ballColor = getRandomColor();
         dy = -dy;
+    }else if (y+dy+ballRadius > canvas.height){
+        if (x > paddleX && x < paddleX+paddleWidth){
+            ballColor = getRandomColor();
+            dy = -dy;
+        }else {
+            alert("Game Over");
+            document.location.reload();
+        }
     }
     //if ball bounce to the left or right of the canvas
     if (x+dx-ballRadius < 0 || x+dx+ballRadius > canvas.width) {
@@ -80,6 +124,7 @@ function draw() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     drawPaddle();
     drawBall();
+    drawBricks();
 }
 
 function getRandomColor() {
