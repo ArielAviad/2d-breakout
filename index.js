@@ -28,15 +28,16 @@ var bricks = [];
 var score;
 const brickPoint = 10;
 
+document.addEventListener("keydown",keyDownHandler,false);
+document.addEventListener("keyup",keyUpHandler,false);
+document.addEventListener("mousemove",mouseMoveHandler,false);
+
 function init(_canvas) {
     canvas = _canvas;
     ctx = _canvas.getContext("2d");
     x = _canvas.width/2;
     y = _canvas.height-30;
     paddleX =(canvas.width-paddleWidth)/2;
-
-    document.addEventListener("keydown",keyDownHandler,false);
-    document.addEventListener("keyup",keyUpHandler,false);
 
     for(c=0; c<brickColumnCount; c++) {
         bricks[c] = [];
@@ -45,6 +46,17 @@ function init(_canvas) {
         }
     }
     score = 0;
+}
+
+function mouseMoveHandler(e) {
+    var relativX = e.clientX - canvas.offsetLeft;
+    if (relativX > 0 && relativX < canvas.width){
+        var paddleLoc = relativX-paddleWidth;
+        paddleX = Math.max(paddleLoc,0);
+        if (paddleX != 0){
+            paddleX = Math.min(paddleLoc,canvas.width-paddleWidth);
+        }
+    }
 }
 
 function keyDownHandler(e) {
@@ -73,7 +85,7 @@ function collisionDetection() {
                 b.toDraw = false;
                 score += brickPoint;
                 if (score >= brickRowCount*brickColumnCount*brickPoint){
-                    alert("YOU WIN, CONGRATULATIONS!");
+                    alert("YOU WIN, CONGRATULATIONS!\n you have " + score + " points");
                     document.location.reload();
                 }
             }
