@@ -38,7 +38,7 @@ function init(_canvas) {
     for(c=0; c<brickColumnCount; c++) {
         bricks[c] = [];
         for(r=0; r<brickRowCount; r++) {
-            bricks[c][r] = { x: 0, y: 0 };
+            bricks[c][r] = { x: 0, y: 0,toDraw: true };
         }
     }
 
@@ -57,6 +57,19 @@ function keyUpHandler(e){
         rightPressed = false;
     }else if(e.keyCode == 37){
         leftPressed = false;
+    }
+}
+
+
+function collisionDetection() {
+    for(var c=0;c<brickColumnCount;++c){
+        for (var r=0;r<brickRowCount;++r){
+            var b = bricks[c][r];
+            if (b.toDraw && x>b.x && x<b.x+brickWidth && y>b.y && y < b.y+brickHeight){
+                dy = -dy;
+                b.toDraw = false;
+            }
+        }
     }
 }
 
@@ -80,15 +93,18 @@ function drawPaddle() {
 function drawBricks() {
     for(var c=0;c<brickColumnCount;++c){
         for(var r=0;r<brickRowCount;++r){
-            var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
-            var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            ctx.beginPath();
-            ctx.rect(brickX,brickY,brickWidth,brickHeight);
-            ctx.fillStyle = ballColor;
-            ctx.fill();
-            ctx.closePath();
+            var b = bricks[c][r];
+            if (b.toDraw) {
+                var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+                var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+                b.x = brickX;
+                b.y = brickY;
+                ctx.beginPath();
+                ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                ctx.fillStyle = ballColor;
+                ctx.fill();
+                ctx.closePath();
+            }
         }
     }
 }
@@ -122,6 +138,8 @@ function draw() {
     x+=dx;y+=dy;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    collisionDetection();
     drawPaddle();
     drawBall();
     drawBricks();
