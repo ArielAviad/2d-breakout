@@ -5,25 +5,28 @@ var canvas;
 var ctx;
 var x,y;
 var dx = 2,dy = -2;
-var ballRadius = 10;
+const ballRadius = 10;
 var ballColor = "#0095DD";
 
-var paddleHeight = 10;
-var paddleWidth = 75;
+const paddleHeight = 10;
+const paddleWidth = 75;
 var paddleX;
 
 var rightPressed = false;
 var leftPressed = false;
 
-var brickRowCount = 3;
-var brickColumnCount = 5;
-var brickWidth = 75;
-var brickHeight = 20;
-var brickPadding = 10;
-var brickOffsetTop = 30;
-var brickOffsetLeft = 30;
+const brickRowCount = 3;
+const brickColumnCount = 5;
+const brickWidth = 75;
+const brickHeight = 20;
+const brickPadding = 10;
+const brickOffsetTop = 30;
+const brickOffsetLeft = 30;
 
 var bricks = [];
+
+var score;
+const brickPoint = 10;
 
 function init(_canvas) {
     canvas = _canvas;
@@ -41,7 +44,7 @@ function init(_canvas) {
             bricks[c][r] = { x: 0, y: 0,toDraw: true };
         }
     }
-
+    score = 0;
 }
 
 function keyDownHandler(e) {
@@ -68,6 +71,11 @@ function collisionDetection() {
             if (b.toDraw && x>b.x && x<b.x+brickWidth && y>b.y && y < b.y+brickHeight){
                 dy = -dy;
                 b.toDraw = false;
+                score += brickPoint;
+                if (score >= brickRowCount*brickColumnCount*brickPoint){
+                    alert("YOU WIN, CONGRATULATIONS!");
+                    document.location.reload();
+                }
             }
         }
     }
@@ -109,6 +117,12 @@ function drawBricks() {
     }
 }
 
+function drawScore() {
+    ctx.font = "16px Ariel";
+    ctx.fillStyle = "black";
+    ctx.fillText("Score: " + score,8,20);
+}
+
 function draw() {
     //if ball bounce to the top of the canvas
     if (y+dy-ballRadius < 0) {
@@ -143,6 +157,7 @@ function draw() {
     drawPaddle();
     drawBall();
     drawBricks();
+    drawScore();
 }
 
 function getRandomColor() {
