@@ -28,24 +28,31 @@ var bricks = [];
 var score;
 const brickPoint = 10;
 
+var lives;
+
 document.addEventListener("keydown",keyDownHandler,false);
 document.addEventListener("keyup",keyUpHandler,false);
 document.addEventListener("mousemove",mouseMoveHandler,false);
 
+function beginPos() {
+    x = canvas.width / 2;
+    y = canvas.height - 30;
+    paddleX = (canvas.width - paddleWidth) / 2;
+}
+
 function init(_canvas) {
     canvas = _canvas;
     ctx = _canvas.getContext("2d");
-    x = _canvas.width/2;
-    y = _canvas.height-30;
-    paddleX =(canvas.width-paddleWidth)/2;
+    beginPos();
 
-    for(c=0; c<brickColumnCount; c++) {
+    for(var c=0; c<brickColumnCount; c++) {
         bricks[c] = [];
-        for(r=0; r<brickRowCount; r++) {
+        for(var r=0; r<brickRowCount; r++) {
             bricks[c][r] = { x: 0, y: 0,toDraw: true };
         }
     }
     score = 0;
+    lives = 3;
 }
 
 function mouseMoveHandler(e) {
@@ -132,7 +139,7 @@ function drawBricks() {
 function drawScore() {
     ctx.font = "16px Ariel";
     ctx.fillStyle = "black";
-    ctx.fillText("Score: " + score,8,20);
+    ctx.fillText("lives: " + lives+ " Score: " + score,8,20);
 }
 
 function draw() {
@@ -145,8 +152,12 @@ function draw() {
             ballColor = getRandomColor();
             dy = -dy;
         }else {
-            alert("Game Over");
-            document.location.reload();
+            if (--lives <= 0) {
+                alert("Game Over");
+                document.location.reload();
+            }else{
+                beginPos();
+            }
         }
     }
     //if ball bounce to the left or right of the canvas
